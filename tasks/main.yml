@@ -1,0 +1,53 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: yes
+
+- name: Ensure dependencies are installed
+  tags: sysctl
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ sysctl_dependencies }}"
+
+- name: Create kernel parameter configuration (/etc/sysctl.conf)
+  tags: sysctl
+  template:
+    src: sysctl.conf.j2
+    dest: /etc/sysctl.conf
+    owner: root
+    group: root
+    mode: 0644
+    lstrip_blocks: true
+  vars:
+    variables: "{{ sysctl_conf }}"
+  notify: reload sysctl
+
+- name: Ensure /etc/sysctl.d dir exists
+  tags: sysctl
+  file:
+    mode: 0755
+    path: /etc/sysctl.d
+    state: directory
+
+- name: Create kernel parameter configurations in /etc/sysctl.d
+  tags: sysctl
+  template:
+    src: sysctl.conf.j2
+    dest: "{{ '/etc/sysctl.d/' ~ item.order | default('00') ~ '-' ~ item.file ~ '.conf' }}"
+    owner: root
+    group: root
+    mode: 0644
+    lstrip_blocks: true
+  notify: reload sysctl
+  loop: "{{ sysctl_d }}"
+  loop_control:
+    label: "{{ item.order | default('00') ~ '-' ~ item.file }}"
+  vars:
+    variables: "{{ item.variables }}"
+  when:
+    - item.file is defined

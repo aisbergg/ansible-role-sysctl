@@ -1,0 +1,6 @@
+---
+# main configuration /etc/sysctl.conf
+sysctl_conf: {}
+
+# configurations in /etc/sysctl.d
+sysctl_d: []

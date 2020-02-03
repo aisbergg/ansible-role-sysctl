@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    sysctl_conf:
+      vm.dirty_ratio: 20
+      vm.dirty_background_ratio: 15
+    sysctl_d:
+      - file: networking
+        order: 10
+        variables:
+          net.ipv4.tcp_syncookies: true
+          net.ipv4.ip_forward: false
+      - file: security
+        order: 20
+        variables:
+          kernel.dmesg_restrict: true
+  roles:
+    - role: aisbergg.sysctl
