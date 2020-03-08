@@ -2,5 +2,8 @@
 # main configuration /etc/sysctl.conf
 sysctl_conf: {}
 
-# configurations in /etc/sysctl.d
+# configuration files in /etc/sysctl.d
 sysctl_d: []
+
+# remove any left over configuration files in /etc/sysctl.d
+sysctl_clear_configurations: false

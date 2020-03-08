@@ -4,23 +4,25 @@ This Ansible role configures the Linux kernel parameters.
 
 ## Requirements
 
-None.
+Requires Python package `jmespath` to be installed on the host running the Ansible playbook.
 
 ## Role Variables
 
 | Variable | Default | Comments |
 |----------|---------|----------|
-| `sysctl_conf` | `{}` | Dictionary of kernel parameters (key-value pairs) to save into `/etc/sysctl.conf`
-| `sysctl_d` | `[]` | List of kernel parameter files (`/etc/sysctl.d/*.conf`)
-| `sysctl_d.file` |  | File name (without extension)
-| `sysctl_d.order` | `00` | File order as a two-digit number
-| `sysctl_d.variables` | `{}` | Dictionary of kernel parameters (key-value pairs)
+| `sysctl_conf` | `{}` | Dictionary of kernel parameters (key-value pairs) to save into `/etc/sysctl.conf` |
+| `sysctl_clear_configurations` | `false` | Remove any left over configuration files (`/etc/sysctl.d/*.conf`) |
+| `sysctl_d` | `[]` | List of kernel configuration files (`/etc/sysctl.d/*.conf`) |
+| `sysctl_d.file` |  | File name (without extension) |
+| `sysctl_d.order` | `00` | File order as a two-digit number |
+| `sysctl_d.variables` | `{}` | Dictionary of kernel parameters (key-value pairs) |
 
 ## Example Playbook
 
 ```yaml
 - hosts: all
   vars:
+    sysctl_clear_configurations: true
     sysctl_conf:
       vm.dirty_ratio: 20
       vm.dirty_background_ratio: 15

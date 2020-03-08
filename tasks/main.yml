@@ -14,7 +14,7 @@
     state: present
   loop: "{{ sysctl_dependencies }}"
 
-- name: Create kernel parameter configuration (/etc/sysctl.conf)
+- name: Create configuration /etc/sysctl.conf
   tags: sysctl
   template:
     src: sysctl.conf.j2
@@ -34,11 +34,27 @@
     path: /etc/sysctl.d
     state: directory
 
-- name: Create kernel parameter configurations in /etc/sysctl.d
+- name: Find configurations in /etc/sysctl.d
+  tags: sysctl
+  find:
+    paths: /etc/sysctl.d
+    patterns: "*.conf"
+  register: files_in_sysctld
+  when: sysctl_clear_configurations
+
+- name: Clear configurations in /etc/sysctl.d
+  tags: sysctl
+  file:
+    path: "{{ item }}"
+    state: absent
+  notify: reload sysctl
+  loop: "{{ files_in_sysctld | json_query('files[*].path') | difference(sysctl_d | map('config_path') | list) }}"
+
+- name: Create configurations in /etc/sysctl.d
   tags: sysctl
   template:
     src: sysctl.conf.j2
-    dest: "{{ '/etc/sysctl.d/' ~ item.order | default('00') ~ '-' ~ item.file ~ '.conf' }}"
+    dest: "{{ config_path }}"
     owner: root
     group: root
     mode: 0644
@@ -46,8 +62,9 @@
   notify: reload sysctl
   loop: "{{ sysctl_d }}"
   loop_control:
-    label: "{{ item.order | default('00') ~ '-' ~ item.file }}"
+    label: "{{ config_path }}"
   vars:
+    config_path: "{{ item | config_path }}"
     variables: "{{ item.variables }}"
   when:
     - item.file is defined
