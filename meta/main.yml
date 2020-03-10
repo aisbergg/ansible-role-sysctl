@@ -3,7 +3,7 @@ dependencies: []
 
 galaxy_info:
   author: Aisbergg
-  description: Configure Linux kernel parameters
+  description: Configure Linux kernel parameters.
   company: none
   issue_tracker_url: https://github.com/Aisbergg/ansible-role-sysctl/issues
   license: MIT
@@ -28,6 +28,4 @@ galaxy_info:
         - all
 
   galaxy_tags:
-    - system
     - sysctl
-    - sysadmin

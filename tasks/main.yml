@@ -1,5 +1,6 @@
 ---
 - name: Include OS-specific variables
+  tags: sysctl
   include_vars: "{{ item }}"
   with_first_found:
     - files:
@@ -40,7 +41,7 @@
     paths: /etc/sysctl.d
     patterns: "*.conf"
   register: files_in_sysctld
-  when: sysctl_clear_configurations
+  when: sysctl_d_clear
 
 - name: Clear configurations in /etc/sysctl.d
   tags: sysctl
@@ -48,7 +49,7 @@
     path: "{{ item }}"
     state: absent
   notify: reload sysctl
-  loop: "{{ files_in_sysctld | json_query('files[*].path') | difference(sysctl_d | map('config_path') | list) }}"
+  loop: "{{ files_in_sysctld.files | default([]) | excess_configs(sysctl_d) }}"
 
 - name: Create configurations in /etc/sysctl.d
   tags: sysctl
@@ -60,11 +61,11 @@
     mode: 0644
     lstrip_blocks: true
   notify: reload sysctl
-  loop: "{{ sysctl_d }}"
-  loop_control:
-    label: "{{ config_path }}"
   vars:
     config_path: "{{ item | config_path }}"
     variables: "{{ item.variables }}"
   when:
     - item.file is defined
+  loop: "{{ sysctl_d }}"
+  loop_control:
+    label: "{{ config_path }}"

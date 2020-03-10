@@ -4,15 +4,15 @@ This Ansible role configures the Linux kernel parameters.
 
 ## Requirements
 
-Requires Python package `jmespath` to be installed on the host running the Ansible playbook.
+None.
 
 ## Role Variables
 
 | Variable | Default | Comments |
 |----------|---------|----------|
 | `sysctl_conf` | `{}` | Dictionary of kernel parameters (key-value pairs) to save into `/etc/sysctl.conf` |
-| `sysctl_clear_configurations` | `false` | Remove any left over configuration files (`/etc/sysctl.d/*.conf`) |
-| `sysctl_d` | `[]` | List of kernel configuration files (`/etc/sysctl.d/*.conf`) |
+| `sysctl_d_clear` | `false` | Remove any left over configuration files from `/etc/sysctl.d/`, that are not defined using this role. |
+| `sysctl_d` | `[]` | List of kernel configuration files to go in `/etc/sysctl.d/` |
 | `sysctl_d.file` |  | File name (without extension) |
 | `sysctl_d.order` | `00` | File order as a two-digit number |
 | `sysctl_d.variables` | `{}` | Dictionary of kernel parameters (key-value pairs) |
@@ -22,22 +22,24 @@ Requires Python package `jmespath` to be installed on the host running the Ansib
 ```yaml
 - hosts: all
   vars:
-    sysctl_clear_configurations: true
     sysctl_conf:
       vm.dirty_ratio: 20
       vm.dirty_background_ratio: 15
+    sysctl_d_clear: true
     sysctl_d:
-      - file: networking
+      # creates a file '10-network.conf'
+      - file: network
         order: 10
         variables:
           net.ipv4.tcp_syncookies: true
           net.ipv4.ip_forward: false
+      # creates a file '20-security.conf'
       - file: security
         order: 20
         variables:
           kernel.dmesg_restrict: true
   roles:
-    - role: sysctl
+    - aisbergg.sysctl
 ```
 
 ## License
