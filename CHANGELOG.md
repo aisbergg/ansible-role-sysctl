@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2020-03-10
+### Changed
+- Remove `jmespath` dependency
+- Rename option `systemctl_clear_configurations` to `sysctl_d_clear`
+
 ## [1.1.0] - 2020-03-08
 ### Added
-- Option `sysctl_clear_configurations` to remove all left over configurations in `/etc/sysctl.d`
+- Option `sysctl_d_clear` to remove all left over configurations in `/etc/sysctl.d`
 
 ## [1.0.1] - 2020-02-07
 ### Changed
