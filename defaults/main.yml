@@ -7,3 +7,6 @@ sysctl_d: []
 
 # remove any left over configuration files from /etc/sysctl.d
 sysctl_d_clear: false
+
+# don't remove configurations listed in the whitelist
+sysctl_d_clear_whitelist: []

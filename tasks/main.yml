@@ -49,7 +49,7 @@
     path: "{{ item }}"
     state: absent
   notify: reload sysctl
-  loop: "{{ files_in_sysctld.files | default([]) | excess_configs(sysctl_d) }}"
+  loop: "{{ files_in_sysctld.files | default([]) | excess_configs(sysctl_d, sysctl_d_clear_whitelist) }}"
 
 - name: Create configurations in /etc/sysctl.d
   tags: sysctl
