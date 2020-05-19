@@ -4,8 +4,8 @@
   include_vars: "{{ item }}"
   with_first_found:
     - files:
-        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
       skip: true
 
 - name: Ensure dependencies are installed
@@ -13,7 +13,7 @@
   package:
     name: "{{ item }}"
     state: present
-  loop: "{{ sysctl_dependencies }}"
+  loop: "{{ __sysctl_dependencies }}"
 
 - name: Create configuration /etc/sysctl.conf
   tags: sysctl
@@ -23,7 +23,6 @@
     owner: root
     group: root
     mode: 0644
-    lstrip_blocks: true
   vars:
     variables: "{{ sysctl_conf }}"
   notify: reload sysctl
@@ -31,9 +30,9 @@
 - name: Ensure /etc/sysctl.d dir exists
   tags: sysctl
   file:
-    mode: 0755
     path: /etc/sysctl.d
     state: directory
+    mode: 0755
 
 - name: Find configurations in /etc/sysctl.d
   tags: sysctl
@@ -59,13 +58,11 @@
     owner: root
     group: root
     mode: 0644
-    lstrip_blocks: true
   notify: reload sysctl
   vars:
     config_path: "{{ item | config_path }}"
     variables: "{{ item.variables }}"
-  when:
-    - item.file is defined
+  when: item.file is defined
   loop: "{{ sysctl_d }}"
   loop_control:
     label: "{{ config_path }}"
