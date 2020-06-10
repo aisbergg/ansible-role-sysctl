@@ -8,12 +8,12 @@
     sysctl_d:
       - file: networking
         order: 10
-        variables:
+        parameters:
           net.ipv4.tcp_syncookies: true
           net.ipv4.ip_forward: false
       - file: security
         order: 20
-        variables:
+        parameters:
           kernel.dmesg_restrict: true
   roles:
     - role: aisbergg.sysctl

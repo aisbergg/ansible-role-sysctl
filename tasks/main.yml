@@ -24,7 +24,7 @@
     group: root
     mode: 0644
   vars:
-    variables: "{{ sysctl_conf }}"
+    parameters: "{{ sysctl_conf }}"
   notify: reload sysctl
 
 - name: Ensure /etc/sysctl.d dir exists
@@ -61,7 +61,7 @@
   notify: reload sysctl
   vars:
     config_path: "{{ item | config_path }}"
-    variables: "{{ item.variables }}"
+    parameters: "{{ item.parameters | default({}) }}"
   when: item.file is defined
   loop: "{{ sysctl_d }}"
   loop_control:

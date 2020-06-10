@@ -1,4 +1,5 @@
 class FilterModule(object):
+
     def filters(self):
         return {
             'config_path': self.config_path,

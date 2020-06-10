@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-06-10
+### Changed
+- Using `parameters` as parameter variable instead of `variables`
+
+### Fixed
+- Fix usage of `boolean` test
+
 ## [1.3.0] - 2020-05-19
 ### Added
 - Whitelist option to keep files when using `sysctl_d_clear: true`

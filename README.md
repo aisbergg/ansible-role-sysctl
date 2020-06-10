@@ -6,7 +6,7 @@ This Ansible role configures the Linux kernel parameters.
 
 None.
 
-## Role Variables
+## Role parameters
 
 | Variable | Default | Comments |
 |----------|---------|----------|
@@ -16,7 +16,7 @@ None.
 | `sysctl_d` | `[]` | List of kernel configuration files to go in `/etc/sysctl.d/` |
 | `sysctl_d.file` |  | File name (without extension) |
 | `sysctl_d.order` | `00` | File order as a two-digit number |
-| `sysctl_d.variables` | `{}` | Dictionary of kernel parameters (key-value pairs) |
+| `sysctl_d.parameters` | `{}` | Dictionary of kernel parameters (key-value pairs) |
 
 ## Example Playbook
 
@@ -33,13 +33,13 @@ None.
       # creates a file '10-network.conf'
       - file: network
         order: 10
-        variables:
+        parameters:
           net.ipv4.tcp_syncookies: true
           net.ipv4.ip_forward: false
       # creates a file '20-security.conf'
       - file: security
         order: 20
-        variables:
+        parameters:
           kernel.dmesg_restrict: true
   roles:
     - aisbergg.sysctl
