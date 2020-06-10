@@ -14,7 +14,7 @@ None.
 | `sysctl_d_clear` | `false` | Remove any left over configuration files from `/etc/sysctl.d/`, that are not defined using this role. |
 | `sysctl_d_clear_whitelist` | `[]` | When using `sysctl_d_clear` the files listed on the whitelist will not be deleted. |
 | `sysctl_d` | `[]` | List of kernel configuration files to go in `/etc/sysctl.d/` |
-| `sysctl_d.file` |  | File name (without extension) |
+| `sysctl_d.file`</br>_required_ |  | File name (without extension) |
 | `sysctl_d.order` | `00` | File order as a two-digit number |
 | `sysctl_d.parameters` | `{}` | Dictionary of kernel parameters (key-value pairs) |
 
