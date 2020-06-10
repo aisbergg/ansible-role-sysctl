@@ -7,7 +7,7 @@
 # b) Non zero - enabled / yes / true
 # --------------------------------------
 
-{% for key, value in parameters.items() %}
+{% for key, value in (parameters | dictsort) %}
   {% if value is boolean %}
 {{ key }} = {{ value | ternary("1", "0") }}
   {% else %}
