@@ -27,6 +27,14 @@
     parameters: "{{ sysctl_conf }}"
   notify: reload sysctl
 
+- name: Link /etc/sysctl.conf to /etc/sysctl.d/99-sysctl.conf
+  file:
+    src: /etc/sysctl.conf
+    path: /etc/sysctl.d/99-sysctl.conf
+    state: link
+    force: true
+  notify: reload sysctl
+
 - name: Ensure /etc/sysctl.d dir exists
   tags: sysctl
   file:
@@ -62,7 +70,6 @@
   vars:
     config_path: "{{ item | config_path }}"
     parameters: "{{ item.parameters | default({}) }}"
-  when: item.file is defined
   loop: "{{ sysctl_d }}"
   loop_control:
     label: "{{ config_path }}"
