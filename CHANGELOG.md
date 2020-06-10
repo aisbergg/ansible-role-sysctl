@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2020-06-10
+### Added
+- Link /etc/sysctl.conf to /etc/sysctl.d/99-sysctl.conf
+
+### Fixed
+- Ensure the rendered templates don't change with every execution
+
 ## [2.0.0] - 2020-06-10
 ### Changed
 - Using `parameters` as parameter variable instead of `variables`
