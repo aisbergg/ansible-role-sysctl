@@ -7,8 +7,7 @@
 # b) Non zero - enabled / yes / true
 # --------------------------------------
 
-{% for key, value in variables.items() | default({}) %}
-  {% if value is bool %}
+  {% if value is boolean %}
 {{ key }} = {{ value | ternary("1", "0") }}
   {% else %}
 {{ key }} = {{ value }}
