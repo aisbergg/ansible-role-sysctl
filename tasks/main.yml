@@ -1,6 +1,6 @@
 ---
-- name: Include OS-specific variables
-  tags: sysctl
+- name: include OS-specific variables
+  tags: [sysctl, always]
   include_vars: "{{ item }}"
   with_first_found:
     - files:
@@ -8,16 +8,16 @@
         - "{{ ansible_os_family | lower }}.yml"
       skip: true
 
-- name: Ensure dependencies are installed
-  tags: sysctl
-  package:
+- name: ensure dependencies are installed
+  tags: [sysctl]
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ __sysctl_dependencies }}"
 
-- name: Create configuration /etc/sysctl.conf
-  tags: sysctl
-  template:
+- name: create configuration /etc/sysctl.conf
+  tags: [sysctl]
+  ansible.builtin.template:
     src: sysctl.conf.j2
     dest: /etc/sysctl.conf
     owner: root
@@ -27,40 +27,41 @@
     parameters: "{{ sysctl_conf }}"
   notify: reload sysctl
 
-- name: Link /etc/sysctl.conf to /etc/sysctl.d/99-sysctl.conf
-  file:
+- name: link /etc/sysctl.conf to /etc/sysctl.d/99-sysctl.conf
+  tags: [sysctl]
+  ansible.builtin.file:
     src: /etc/sysctl.conf
     path: /etc/sysctl.d/99-sysctl.conf
     state: link
     force: true
   notify: reload sysctl
 
-- name: Ensure /etc/sysctl.d dir exists
-  tags: sysctl
-  file:
+- name: ensure /etc/sysctl.d dir exists
+  tags: [sysctl]
+  ansible.builtin.file:
     path: /etc/sysctl.d
     state: directory
     mode: 0755
 
-- name: Find configurations in /etc/sysctl.d
-  tags: sysctl
-  find:
+- name: find configurations in /etc/sysctl.d
+  tags: [sysctl]
+  ansible.builtin.find:
     paths: /etc/sysctl.d
     patterns: "*.conf"
   register: files_in_sysctld
   when: sysctl_d_clear
 
-- name: Clear configurations in /etc/sysctl.d
-  tags: sysctl
-  file:
+- name: clear configurations in /etc/sysctl.d
+  tags: [sysctl]
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   notify: reload sysctl
   loop: "{{ files_in_sysctld.files | default([]) | excess_configs(sysctl_d, sysctl_d_clear_whitelist) }}"
 
-- name: Create configurations in /etc/sysctl.d
-  tags: sysctl
-  template:
+- name: create configurations in /etc/sysctl.d
+  tags: [sysctl]
+  ansible.builtin.template:
     src: sysctl.conf.j2
     dest: "{{ config_path }}"
     owner: root
