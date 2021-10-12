@@ -5,6 +5,7 @@
   tasks:
     - name: ensure Python and Grep are installed
       ansible.builtin.raw: pacman -Sy --noconfirm python grep
+      changed_when: false
 
 - name: Prepare Debian Distributions
   hosts: debian
@@ -12,8 +13,10 @@
   tasks:
     - name: update package cache
       ansible.builtin.raw: apt-get update
+      changed_when: false
     - name: ensure Python is installed
       ansible.builtin.raw: apt-get install -y python3
+      changed_when: false
 
 - name: Prepare RedHat Distributions
   hosts: redhat
@@ -21,3 +24,4 @@
   tasks:
     - name: ensure Python is installed
       ansible.builtin.raw: yum install -y python36
+      changed_when: false
