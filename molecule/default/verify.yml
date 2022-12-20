@@ -1,0 +1,41 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: read sysctl.conf
+      ansible.builtin.slurp:
+        src: "/etc/sysctl.conf"
+      register: sysctl_conf
+
+    - name: decode sysctl.conf content
+      ansible.builtin.set_fact:
+        sysctl_conf: "{{ sysctl_conf.content | b64decode }}"
+
+    - name: read 10-networking.conf
+      ansible.builtin.slurp:
+        src: "/etc/sysctl.d/10-networking.conf"
+      register: sysctl_d_networking
+
+    - name: decode 10-networking.conf content
+      ansible.builtin.set_fact:
+        sysctl_d_networking: "{{ sysctl_d_networking.content | b64decode }}"
+
+    - name: read 20-security.conf
+      ansible.builtin.slurp:
+        src: "/etc/sysctl.d/20-security.conf"
+      register: sysctl_d_security
+
+    - name: decode 20-security.conf content
+      ansible.builtin.set_fact:
+        sysctl_d_security: "{{ sysctl_d_security.content | b64decode }}"
+
+    - name: check if sysctl configs contain the correct content
+      ansible.builtin.assert:
+        that:
+          - "'vm.dirty_background_ratio = 15' in sysctl_conf"
+          - "'vm.dirty_ratio = 20' in sysctl_conf"
+          - "'net.ipv4.ip_forward = 0' in sysctl_d_networking"
+          - "'net.ipv4.tcp_syncookies = 1' in sysctl_d_networking"
+          - "'kernel.dmesg_restrict = 1' in sysctl_d_security"

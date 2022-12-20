@@ -1,38 +1,32 @@
 ---
 dependency:
   name: galaxy
-driver:
-  name: docker
-lint:
-  name: yamllint
   options:
-    config-file: molecule/default/yaml-lint.yml
+    role-file: requirements.yml
+    requirements-file: requirements.yml
+driver:
+  name: vagrant
 platforms:
-  - name: ubuntu-19.10
-    image: ubuntu:19.10
-    pre_build_image: true
-    groups:
-      - debian
-  - name: centos-8
-    image: centos:8
-    pre_build_image: true
-    groups:
-      - redhat
-  - name: archlinux
-    image: archlinux/base:latest
-    pre_build_image: true
+  - name: molecule-sysctl-debian11-$TOX_ENVNAME
+    box: debian/bullseye64
+    memory: 384
+    cpus: 1
+
+  - name: molecule-sysctl-rockylinux9-$TOX_ENVNAME
+    box: bento/rockylinux-9.1
+    memory: 384
+    cpus: 1
+
+  - name: molecule-sysctl-archlinux-$TOX_ENVNAME
+    box: archlinux/archlinux
+    memory: 384
+    cpus: 1
 provisioner:
   name: ansible
-  playbooks:
-    prepare: ${MOLECULE_PLAYBOOK:-prepare.yml}
-    converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
-  lint:
-    name: ansible-lint
+  lint: ansible-lint --force-color
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
 verifier:
-  name: testinfra
-  env:
-    LANG: ""
-  lint:
-    name: flake8
-  options:
-    s: true
+  name: ansible
